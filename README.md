@@ -9,6 +9,3 @@
 
 La carpeta generada y los archivos temporales de Wrangler se excluyen del repositorio; se pueden volver a generar localmente.
 
-## Configuración sensible
-
-Las claves de Twitch y otros valores secretos se guardan en las variables y secretos de Cloudflare Pages, no en este repositorio. No publiques claves de transmisión de Twitch, VK u otras plataformas.
