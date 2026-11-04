@@ -1,7 +1,5 @@
 # HS Live
 
-Sitio de HoliSofi Live. Permite mostrar un reproductor configurable junto al chat de Twitch.
-
 ## Código y publicación
 
 - `index.html`, `assets/` y `functions/` contienen el sitio y sus funciones de Cloudflare Pages.
