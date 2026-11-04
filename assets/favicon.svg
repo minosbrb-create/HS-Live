@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <path fill="#c5a3ff" d="M16 3h32l13 13v32L48 61H16L3 48V16z"/>
+  <path fill="#090c0f" d="M17.8 7h28.4L57 17.8v28.4L46.2 57H17.8L7 46.2V17.8z"/>
+  <text x="20.5" y="43" fill="#fff" font-family="Arial Black,Arial,sans-serif" font-size="30" font-weight="900" text-anchor="middle">H</text>
+  <text x="43.5" y="43" fill="#c5a3ff" font-family="Arial Black,Arial,sans-serif" font-size="30" font-weight="900" text-anchor="middle">S</text>
+</svg>
