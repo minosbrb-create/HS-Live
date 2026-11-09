@@ -17,7 +17,7 @@
     }
     function applyVideoSource(config) {
       const configuredIdentifier = typeof config?.videoChannel === 'string' ? config.videoChannel.trim() : '';
-      const channel = config?.videoPlatform === 'youtube' || config?.videoPlatform === 'drive'
+      const channel = config?.videoPlatform === 'youtube' || config?.videoPlatform === 'drive' || config?.videoPlatform === 'ok'
         ? configuredIdentifier
         : configuredIdentifier.toLowerCase();
       let src = '';
@@ -33,6 +33,9 @@
       } else if (config?.videoPlatform === 'drive' && /^[a-zA-Z0-9_-]{10,200}$/.test(channel)) {
         src = `https://drive.google.com/file/d/${encodeURIComponent(channel)}/preview`;
         videoEmbed.title = 'Video de Google Drive';
+      } else if (config?.videoPlatform === 'ok' && /^\d{1,20}$/.test(channel)) {
+        src = `https://ok.ru/videoembed/${encodeURIComponent(channel)}`;
+        videoEmbed.title = 'Video de OK.ru';
       }
       if (src) videoEmbed.src = src;
     }

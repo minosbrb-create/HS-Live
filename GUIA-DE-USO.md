@@ -59,6 +59,7 @@ La entrada `video_source`, en el mismo namespace KV, determina el reproductor me
 - `twitch:holisofi` — canal de Twitch.
 - `youtube:VIDEO_ID` — video o directo de YouTube; se utiliza el ID, no la URL completa.
 - `drive:FILE_ID` — archivo de Drive con acceso de lector para cualquiera que tenga el enlace.
+- `ok:VIDEO_ID` — video o directo de OK.ru; se utiliza el número de la URL. También se aceptan enlaces `https://ok.ru/video/ID`, `https://ok.ru/videoembed/ID` y `https://ok.ru/live/ID` (con o sin el prefijo `ok:`).
 
 Esta entrada solo controla el reproductor. Después de guardar un valor nuevo, la página consulta la configuración al recargarse manualmente. Un video grabado se reproduce de forma independiente en cada navegador; su posición no se sincroniza entre espectadores.
 

@@ -16,7 +16,11 @@ function json(data) {
 
 function parseVideoSource(value) {
   if (typeof value !== 'string') return DEFAULT_VIDEO;
-  const match = /^(vk|twitch|youtube|drive):([a-z0-9_-]{1,200})$/i.exec(value.trim());
+  const trimmedValue = value.trim();
+  const okUrlMatch = /^(?:ok:)?https?:\/\/(?:www\.|m\.)?ok\.ru\/(?:video|videoembed|live)\/(\d+)(?:[/?#].*)?$/i.exec(trimmedValue);
+  if (okUrlMatch) return { platform: 'ok', channel: okUrlMatch[1] };
+
+  const match = /^(vk|twitch|youtube|drive|ok):([a-z0-9_-]{1,200})$/i.exec(trimmedValue);
   if (!match) return DEFAULT_VIDEO;
 
   const platform = match[1].toLowerCase();
@@ -25,9 +29,10 @@ function parseVideoSource(value) {
   if (platform === 'twitch' && !/^[a-z0-9_]{1,25}$/i.test(identifier)) return DEFAULT_VIDEO;
   if (platform === 'youtube' && !/^[a-zA-Z0-9_-]{11}$/.test(identifier)) return DEFAULT_VIDEO;
   if (platform === 'drive' && !/^[a-zA-Z0-9_-]{10,200}$/.test(identifier)) return DEFAULT_VIDEO;
+  if (platform === 'ok' && !/^\d{1,20}$/.test(identifier)) return DEFAULT_VIDEO;
   const channel = platform === 'youtube' || platform === 'drive'
     ? identifier
-    : identifier.toLowerCase();
+    : platform === 'ok' ? identifier : identifier.toLowerCase();
   return { platform, channel };
 }
 
@@ -54,6 +59,8 @@ export async function onRequestGet({ request, env }) {
     embedUrl = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.channel)}?playsinline=1`;
   } else if (video.platform === 'drive') {
     embedUrl = `https://drive.google.com/file/d/${encodeURIComponent(video.channel)}/preview`;
+  } else if (video.platform === 'ok') {
+    embedUrl = `https://ok.ru/videoembed/${encodeURIComponent(video.channel)}`;
   } else {
     embedUrl = `https://live.vkvideo.ru/app/embed/${encodeURIComponent(video.channel)}`;
   }
