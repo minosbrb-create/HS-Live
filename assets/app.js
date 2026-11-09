@@ -1,5 +1,10 @@
     const player = document.getElementById('player');
-    const videoEmbed = document.querySelector('.video-embed');
+    let videoEmbed = document.querySelector('.video-embed');
+    const playerControls = document.getElementById('playerControls');
+    const okVideoReload = document.getElementById('okVideoReload');
+    const okVideoReloadLabel = okVideoReload.querySelector('span');
+    let currentVideoPlatform = '';
+    let okVideoReloadTimer = null;
     const maintenanceScreen = document.getElementById('maintenanceScreen');
     let maintenanceMode = false;
     let maintenancePoll = null;
@@ -38,7 +43,25 @@
         videoEmbed.title = 'Video de OK.ru';
       }
       if (src) videoEmbed.src = src;
+      currentVideoPlatform = src && config?.videoPlatform === 'ok' ? 'ok' : '';
+      okVideoReload.hidden = currentVideoPlatform !== 'ok';
+      playerControls.classList.toggle('has-ok-video', currentVideoPlatform === 'ok');
     }
+    okVideoReload.addEventListener('click', () => {
+      if (currentVideoPlatform !== 'ok' || okVideoReload.disabled || !videoEmbed.getAttribute('src')) return;
+      const currentSrc = videoEmbed.getAttribute('src');
+      okVideoReload.disabled = true;
+      okVideoReloadLabel.textContent = 'Espera...';
+      const refreshedEmbed = videoEmbed.cloneNode(false);
+      refreshedEmbed.src = currentSrc;
+      videoEmbed.replaceWith(refreshedEmbed);
+      videoEmbed = refreshedEmbed;
+      window.clearTimeout(okVideoReloadTimer);
+      okVideoReloadTimer = window.setTimeout(() => {
+        okVideoReload.disabled = false;
+        okVideoReloadLabel.textContent = 'Recargar video';
+      }, 10_000);
+    });
     async function getSiteConfig() {
       try {
         const response = await fetch('/api/site-config', { headers: { Accept: 'application/json' }, cache: 'no-store' });
