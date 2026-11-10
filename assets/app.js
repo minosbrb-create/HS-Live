@@ -173,7 +173,6 @@
       setMobilePlayerMenu(false);
       setTheaterMode(!document.body.classList.contains('theater-mode'));
     });
-    if (window.innerWidth > 680 && !landscapeChatQuery.matches) setTheaterMode(true);
     window.addEventListener('keydown', event => {
       if (event.key !== 'Escape') return;
       if (playerControls.classList.contains('menu-open')) setMobilePlayerMenu(false);
