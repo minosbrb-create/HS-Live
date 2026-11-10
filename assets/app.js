@@ -10,19 +10,10 @@
       if (height > mobileBaseViewportHeight) mobileBaseViewportHeight = height;
       document.documentElement.style.setProperty('--mobile-visual-height', `${Math.round(height)}px`);
       document.documentElement.style.setProperty('--mobile-visual-top', `${Math.round(top)}px`);
-      const portrait = window.matchMedia('(orientation: portrait) and (max-width: 680px)').matches;
-      const keyboardOpen = portrait && mobileBaseViewportHeight - height > 140;
+      const keyboardOpen = mobileBaseViewportHeight - height > 140;
       document.body.classList.toggle('mobile-keyboard-open', keyboardOpen);
-      const chatPanel = document.getElementById('chat');
       const chatFrame = document.getElementById('twitchChat');
-      const landscapeChatOpen = landscapeChatQuery.matches && document.body.classList.contains('landscape-chat-open');
-      if ((keyboardOpen || landscapeChatOpen) && chatPanel && chatFrame) {
-        const visibleHeight = chatPanel.getBoundingClientRect().height;
-        const frameHeight = Math.max(900, Math.ceil(mobileBaseViewportHeight) + 240);
-        chatFrame.style.height = `${frameHeight}px`;
-        chatFrame.style.flex = `0 0 ${frameHeight}px`;
-        chatFrame.style.transform = `translateY(-${Math.max(0, frameHeight - visibleHeight)}px)`;
-      } else if (chatFrame) {
+      if (chatFrame) {
         chatFrame.style.removeProperty('height');
         chatFrame.style.removeProperty('flex');
         chatFrame.style.removeProperty('transform');
@@ -32,6 +23,20 @@
     window.addEventListener('resize', syncMobileVisualViewport, { passive: true });
     mobileVisualViewport?.addEventListener('resize', syncMobileVisualViewport, { passive: true });
     mobileVisualViewport?.addEventListener('scroll', syncMobileVisualViewport, { passive: true });
+    let landscapeControlTimer = null;
+    function revealLandscapeControl() {
+      if (!landscapeChatQuery.matches) return;
+      document.body.classList.add('landscape-controls-visible');
+      window.clearTimeout(landscapeControlTimer);
+      landscapeControlTimer = window.setTimeout(() => {
+        document.body.classList.remove('landscape-controls-visible');
+      }, 4_000);
+    }
+    player.addEventListener('pointerdown', revealLandscapeControl, { passive: true });
+    player.addEventListener('focusin', revealLandscapeControl);
+    window.addEventListener('blur', () => {
+      if (document.activeElement === videoEmbed) revealLandscapeControl();
+    });
     window.addEventListener('orientationchange', () => window.setTimeout(() => {
       mobileBaseViewportHeight = mobileVisualViewport?.height || window.innerHeight;
       syncMobileVisualViewport();
@@ -42,6 +47,7 @@
       landscapeChatToggle.setAttribute('aria-expanded', String(open));
       landscapeChatToggle.setAttribute('aria-label', open ? 'Mostrar solo el video' : 'Mostrar chat');
       landscapeChatToggle.querySelector('span').textContent = open ? 'Solo video' : 'Chat';
+      revealLandscapeControl();
     }
     landscapeChatToggle.addEventListener('click', async () => {
       const open = !document.body.classList.contains('landscape-chat-open');
@@ -246,7 +252,11 @@
       requestAnimationFrame(alignChatWithPlayer);
     }
     window.addEventListener('resize', () => {
-      if (!landscapeChatQuery.matches) setLandscapeChatOpen(false);
+      if (!landscapeChatQuery.matches) {
+        setLandscapeChatOpen(false);
+        document.body.classList.remove('landscape-controls-visible');
+        window.clearTimeout(landscapeControlTimer);
+      }
       renderChatVisibility();
       alignChatWithPlayer();
     });
