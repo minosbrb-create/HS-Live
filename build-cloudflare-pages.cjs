@@ -8,6 +8,7 @@ const sourceFiles = [
   'index.html',
   'assets/styles.css',
   'assets/app.js',
+  'assets/mobile-viewport.js',
   'assets/favicon.svg',
   'assets/fondo-floral-negro.png',
   'assets/patreon-icon.png',
