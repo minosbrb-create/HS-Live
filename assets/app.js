@@ -75,7 +75,10 @@
       [100, 300, 700, 1100].forEach((delay) => window.setTimeout(syncRotatedMobileViewportFrame, delay));
     }, { passive: true });
     mobileVisualViewport?.addEventListener('resize', syncRotatedMobileViewportFrame, { passive: true });
-    document.addEventListener('fullscreenchange', () => settleMobileViewport(false), { passive: true });
+    document.addEventListener('fullscreenchange', () => {
+      settleMobileViewport(false);
+      if (!document.fullscreenElement && document.body.classList.contains('theater-mode')) setTheaterMode(false);
+    }, { passive: true });
     function setLandscapeChatOpen(open) {
       document.body.classList.toggle('landscape-chat-open', open);
       syncMobileVisualViewport();
@@ -134,7 +137,24 @@
     const videoReloadLabel = videoReload.querySelector('span');
     const vkHelpDialog = document.getElementById('vkHelpDialog');
     const vkHelpButtons = [document.getElementById('vkHelpButton'), document.getElementById('vkHelpMobile')];
-    for (const button of vkHelpButtons) button.addEventListener('click', () => vkHelpDialog.showModal());
+    const vkHelpTitle = document.getElementById('vkHelpTitle');
+    const vkHelpPages = [document.getElementById('vkHelpPage1'), document.getElementById('vkHelpPage2')];
+    const vkHelpPageButtons = [...vkHelpDialog.querySelectorAll('[data-help-page]')];
+    function showVkHelpPage(pageNumber) {
+      const pageIndex = pageNumber === 2 ? 1 : 0;
+      vkHelpPages.forEach((page, index) => { page.hidden = index !== pageIndex; });
+      vkHelpTitle.textContent = pageIndex === 0 ? vkHelpTitle.dataset.pageOneTitle : vkHelpTitle.dataset.pageTwoTitle;
+      vkHelpPageButtons.forEach((button, index) => {
+        if (index === pageIndex) button.setAttribute('aria-current', 'page');
+        else button.removeAttribute('aria-current');
+      });
+      document.querySelector('.vk-help-content').scrollTop = 0;
+    }
+    for (const button of vkHelpButtons) button.addEventListener('click', () => {
+      showVkHelpPage(1);
+      vkHelpDialog.showModal();
+    });
+    vkHelpPageButtons.forEach(button => button.addEventListener('click', () => showVkHelpPage(Number(button.dataset.helpPage))));
     document.getElementById('vkHelpClose').addEventListener('click', () => vkHelpDialog.close());
     vkHelpDialog.addEventListener('click', event => {
       if (event.target === vkHelpDialog) vkHelpDialog.close();
@@ -212,9 +232,18 @@
       theaterToggleLabel.textContent = enabled ? 'Salir del teatro' : 'Modo teatro';
       requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
     }
-    theaterToggle.addEventListener('click', () => {
+    theaterToggle.addEventListener('click', async () => {
       setMobilePlayerMenu(false);
-      setTheaterMode(!document.body.classList.contains('theater-mode'));
+      const enabled = !document.body.classList.contains('theater-mode');
+      if (enabled) {
+        try { await document.documentElement.requestFullscreen(); } catch {}
+        setTheaterMode(true);
+      } else {
+        setTheaterMode(false);
+        if (document.fullscreenElement === document.documentElement) {
+          try { await document.exitFullscreen(); } catch {}
+        }
+      }
     });
     window.addEventListener('keydown', event => {
       if (event.key !== 'Escape') return;
