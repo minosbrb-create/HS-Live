@@ -18,7 +18,7 @@
       const landscapeChatOpen = landscapeChatQuery.matches && document.body.classList.contains('landscape-chat-open');
       if ((keyboardOpen || landscapeChatOpen) && chatPanel && chatFrame) {
         const visibleHeight = chatPanel.getBoundingClientRect().height;
-        const frameHeight = Math.max(720, Math.ceil(visibleHeight) + 240);
+        const frameHeight = Math.max(900, Math.ceil(mobileBaseViewportHeight) + 240);
         chatFrame.style.height = `${frameHeight}px`;
         chatFrame.style.flex = `0 0 ${frameHeight}px`;
         chatFrame.style.transform = `translateY(-${Math.max(0, frameHeight - visibleHeight)}px)`;
