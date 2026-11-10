@@ -1,6 +1,7 @@
     const player = document.getElementById('player');
     const landscapeChatToggle = document.getElementById('landscapeChatToggle');
     const landscapeChatQuery = window.matchMedia('(orientation: landscape) and (pointer: coarse) and (max-height: 700px)');
+    const portraitChatQuery = window.matchMedia('(orientation: portrait) and (pointer: coarse) and (max-width: 680px)');
     const mobileVisualViewport = window.visualViewport;
     let mobileBaseViewportHeight = mobileVisualViewport?.height || window.innerHeight;
     function syncMobileVisualViewport() {
@@ -14,6 +15,22 @@
       const landscapeChatActive = landscapeChatQuery.matches && document.body.classList.contains('landscape-chat-open');
       const keyboardOpen = keyboardDelta > (landscapeChatActive ? 75 : 140);
       document.body.classList.toggle('mobile-keyboard-open', keyboardOpen);
+      const chatFrame = document.getElementById('twitchChat');
+      if (chatFrame) {
+        const chatPanel = document.getElementById('chat');
+        if (keyboardOpen && portraitChatQuery.matches && chatPanel) {
+          const visibleHeight = chatPanel.getBoundingClientRect().height;
+          const extraHeight = Math.min(180, Math.max(0, Math.round(visibleHeight * 0.4)));
+          const frameHeight = Math.ceil(visibleHeight) + extraHeight;
+          chatFrame.style.height = `${frameHeight}px`;
+          chatFrame.style.flex = `0 0 ${frameHeight}px`;
+          chatFrame.style.transform = `translateY(-${extraHeight}px)`;
+        } else {
+          chatFrame.style.removeProperty('height');
+          chatFrame.style.removeProperty('flex');
+          chatFrame.style.removeProperty('transform');
+        }
+      }
     }
     syncMobileVisualViewport();
     window.addEventListener('resize', syncMobileVisualViewport, { passive: true });
