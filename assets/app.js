@@ -7,8 +7,14 @@
       landscapeChatToggle.setAttribute('aria-label', open ? 'Mostrar solo el video' : 'Mostrar chat');
       landscapeChatToggle.querySelector('span').textContent = open ? 'Solo video' : 'Chat';
     }
-    landscapeChatToggle.addEventListener('click', () => {
-      setLandscapeChatOpen(!document.body.classList.contains('landscape-chat-open'));
+    landscapeChatToggle.addEventListener('click', async () => {
+      const open = !document.body.classList.contains('landscape-chat-open');
+      if (open && landscapeChatQuery.matches && document.fullscreenElement !== document.documentElement) {
+        try { await document.documentElement.requestFullscreen(); } catch {}
+      } else if (!open && document.fullscreenElement === document.documentElement) {
+        try { await document.exitFullscreen(); } catch {}
+      }
+      setLandscapeChatOpen(open);
     });
     let videoEmbed = document.querySelector('.video-embed');
     const playerControls = document.getElementById('playerControls');
@@ -230,7 +236,7 @@
       twitchSubscribeLink.href = `https://www.twitch.tv/subs/${normalizedLogin}`;
       twitchSubscribeLink.setAttribute('aria-label', `Suscribirse o regalar una suscripción al canal ${normalizedLogin} en Twitch`);
       if (location.protocol !== 'file:') {
-        twitchChat.src = `https://www.twitch.tv/embed/${normalizedLogin}/chat?parent=${encodeURIComponent(location.hostname)}&darkpopout`;
+        twitchChat.src = `https://www.twitch.tv/embed/${normalizedLogin}/chat?parent=${encodeURIComponent(location.hostname)}`;
       }
     }
     if (location.protocol === 'file:') {
