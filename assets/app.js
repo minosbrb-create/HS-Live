@@ -149,7 +149,11 @@
       window.clearTimeout(portraitVideoControlsTimer);
       portraitVideoControlsTimer = window.setTimeout(() => {
         document.body.classList.remove('portrait-video-controls-visible');
-        if (document.activeElement === videoEmbed) videoEmbed.blur();
+        // The iframe is cross-origin, so taps inside it do not bubble to this
+        // page. Release its focus when the controls hide; the next tap then
+        // produces a fresh focus/blur event and can reveal them again.
+        videoEmbed.blur();
+        window.focus();
       }, 5_000);
     }
     const vkHelpTitle = document.getElementById('vkHelpTitle');
