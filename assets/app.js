@@ -277,12 +277,13 @@
         return;
       }
       const playerRect = player.getBoundingClientRect();
-      chatColumn.style.height = `${Math.round(playerRect.height)}px`;
       if (document.body.classList.contains('theater-mode')) {
-        const layoutTop = layout.getBoundingClientRect().top;
+        const layoutRect = layout.getBoundingClientRect();
         chatColumn.style.alignSelf = 'start';
-        chatColumn.style.marginTop = `${Math.round(playerRect.top - layoutTop)}px`;
+        chatColumn.style.marginTop = `${Math.round(playerRect.top - layoutRect.top)}px`;
+        chatColumn.style.height = `${Math.max(0, Math.round(layoutRect.bottom - playerRect.top))}px`;
       } else {
+        chatColumn.style.height = `${Math.round(playerRect.height)}px`;
         chatColumn.style.removeProperty('margin-top');
         chatColumn.style.removeProperty('align-self');
       }
