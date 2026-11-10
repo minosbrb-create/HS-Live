@@ -15,7 +15,7 @@
       const chatFrame = document.getElementById('twitchChat');
       if (chatFrame) {
         const chatPanel = document.getElementById('chat');
-        if (keyboardOpen && chatPanel) {
+        if (keyboardOpen && chatPanel && !landscapeChatQuery.matches) {
           const visibleHeight = chatPanel.getBoundingClientRect().height;
           const landscapeKeyboard = landscapeChatQuery.matches && document.body.classList.contains('landscape-chat-open');
           const extraHeight = Math.min(landscapeKeyboard ? 320 : 180, Math.max(0, Math.round(visibleHeight * (landscapeKeyboard ? 0.85 : 0.4))));
