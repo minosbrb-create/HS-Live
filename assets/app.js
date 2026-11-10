@@ -2,17 +2,39 @@
     const landscapeChatToggle = document.getElementById('landscapeChatToggle');
     const landscapeChatQuery = window.matchMedia('(orientation: landscape) and (pointer: coarse) and (max-height: 700px)');
     const mobileVisualViewport = window.visualViewport;
+    let mobileBaseViewportHeight = mobileVisualViewport?.height || window.innerHeight;
     function syncMobileVisualViewport() {
       if (!window.matchMedia('(pointer: coarse)').matches) return;
       const height = mobileVisualViewport?.height || window.innerHeight;
       const top = mobileVisualViewport?.offsetTop || 0;
+      if (height > mobileBaseViewportHeight) mobileBaseViewportHeight = height;
       document.documentElement.style.setProperty('--mobile-visual-height', `${Math.round(height)}px`);
       document.documentElement.style.setProperty('--mobile-visual-top', `${Math.round(top)}px`);
+      const portrait = window.matchMedia('(orientation: portrait) and (max-width: 680px)').matches;
+      const keyboardOpen = portrait && mobileBaseViewportHeight - height > 140;
+      document.body.classList.toggle('mobile-keyboard-open', keyboardOpen);
+      const chatPanel = document.getElementById('chat');
+      const chatFrame = document.getElementById('twitchChat');
+      if (keyboardOpen && chatPanel && chatFrame) {
+        const frameHeight = 720;
+        const visibleHeight = chatPanel.getBoundingClientRect().height;
+        chatFrame.style.height = `${frameHeight}px`;
+        chatFrame.style.flex = `0 0 ${frameHeight}px`;
+        chatFrame.style.transform = `translateY(-${Math.max(0, frameHeight - visibleHeight)}px)`;
+      } else if (chatFrame) {
+        chatFrame.style.removeProperty('height');
+        chatFrame.style.removeProperty('flex');
+        chatFrame.style.removeProperty('transform');
+      }
     }
     syncMobileVisualViewport();
     window.addEventListener('resize', syncMobileVisualViewport, { passive: true });
     mobileVisualViewport?.addEventListener('resize', syncMobileVisualViewport, { passive: true });
     mobileVisualViewport?.addEventListener('scroll', syncMobileVisualViewport, { passive: true });
+    window.addEventListener('orientationchange', () => window.setTimeout(() => {
+      mobileBaseViewportHeight = mobileVisualViewport?.height || window.innerHeight;
+      syncMobileVisualViewport();
+    }, 300), { passive: true });
     function setLandscapeChatOpen(open) {
       document.body.classList.toggle('landscape-chat-open', open);
       landscapeChatToggle.setAttribute('aria-expanded', String(open));
