@@ -135,6 +135,13 @@
     });
     const videoReload = document.getElementById('videoReload');
     const videoReloadLabel = videoReload.querySelector('span');
+    let portraitReloadTimer = null;
+    function revealPortraitReload() {
+      if (!portraitChatQuery.matches || videoReload.hidden) return;
+      document.body.classList.add('portrait-reload-visible');
+      window.clearTimeout(portraitReloadTimer);
+      portraitReloadTimer = window.setTimeout(() => document.body.classList.remove('portrait-reload-visible'), 4_000);
+    }
     const vkHelpDialog = document.getElementById('vkHelpDialog');
     const vkHelpButtons = [document.getElementById('vkHelpButton'), document.getElementById('vkHelpMobile')];
     const vkHelpTitle = document.getElementById('vkHelpTitle');
@@ -209,6 +216,10 @@
     videoReload.addEventListener('click', () => {
       if (!currentVideoPlatform || videoReload.disabled || !videoEmbed.getAttribute('src')) return;
       setMobilePlayerMenu(false);
+      if (isMobileLayout()) {
+        location.reload();
+        return;
+      }
       const currentSrc = videoEmbed.getAttribute('src');
       videoReload.disabled = true;
       videoReloadLabel.textContent = 'Espera...';
@@ -222,6 +233,10 @@
         videoReload.disabled = false;
         videoReloadLabel.textContent = 'Recargar video';
       }, 5_000);
+    });
+    videoEmbed.addEventListener('focus', revealPortraitReload);
+    window.addEventListener('blur', () => {
+      if (document.activeElement === videoEmbed) revealPortraitReload();
     });
     function setTheaterMode(enabled) {
       document.body.classList.toggle('theater-mode', enabled);
