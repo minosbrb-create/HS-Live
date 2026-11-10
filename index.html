@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#101018">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <title>HoliSofi Live</title>
-  <link rel="stylesheet" href="assets/styles.css?v=20261110-35">
+  <link rel="stylesheet" href="assets/styles.css?v=20261110-37">
 </head>
 <body>
   <header class="topbar">
@@ -30,11 +30,13 @@
             <button class="mobile-player-menu" id="mobilePlayerMenu" type="button" aria-label="Mostrar controles del video" title="Controles del video" aria-expanded="false" aria-controls="playerControlActions"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
             <div class="player-control-actions" id="playerControlActions">
               <button class="video-reload" id="videoReload" type="button" aria-label="Recargar video" title="Recargar video" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.7-4L4 9"/><path d="M4 4v5h5M4 13a8 8 0 0 0 14.7 4L20 15"/><path d="M20 20v-5h-5"/></svg><span>Recargar video</span></button>
+              <button class="vk-help-button" id="vkHelpButton" type="button" aria-label="Ayuda para abrir VK en el móvil" title="Ayuda para VK" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 1 1 4.5 1.2c-.8 1.1-2.2 1.2-2.2 3M12 17h.01"/></svg><span>Ayuda</span></button>
               <button class="theater-toggle" id="theaterToggle" type="button" aria-label="Activar modo teatro" title="Activar modo teatro" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/><path d="M7 7h10v10H7z"/></svg><span>Modo teatro</span></button>
               <button class="desktop-chat-toggle" id="desktopChatToggle" type="button" aria-label="Ocultar chat" title="Ocultar chat" aria-expanded="true" aria-controls="chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-5 4v-4.2a2.5 2.5 0 0 1-2-2.3z"/><path d="M8 8h8M8 11.5h5"/></svg><span id="desktopChatLabel">Ocultar chat</span></button>
             </div>
           </div>
           <button class="landscape-chat-toggle" id="landscapeChatToggle" type="button" aria-label="Mostrar chat" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-5 4v-4.2a2.5 2.5 0 0 1-2-2.3z"/><path d="M8 8h8M8 11.5h5"/></svg><span>Chat</span></button>
+          <button class="vk-help-mobile" id="vkHelpMobile" type="button" aria-label="Ayuda para abrir VK en el móvil" title="Ayuda para VK" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 1 1 4.5 1.2c-.8 1.1-2.2 1.2-2.2 3M12 17h.01"/></svg></button>
         </div>
       </section>
       <div class="chat-column">
@@ -54,6 +56,24 @@
       </div>
     </div>
   </main>
+  <dialog class="vk-help-dialog" id="vkHelpDialog" aria-labelledby="vkHelpTitle">
+    <div class="vk-help-heading"><h2 id="vkHelpTitle">Si VK no carga o muestra un aviso de VPN</h2><button id="vkHelpClose" type="button" aria-label="Cerrar ayuda">×</button></div>
+    <div class="vk-help-content">
+      <h3>Android · Chrome</h3>
+      <ol>
+        <li>Abre el menú de Chrome tocando los tres puntos <svg class="chrome-menu-dots" viewBox="0 0 24 24" aria-label="Icono de menú de tres puntos" role="img"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg> de la esquina superior derecha.</li>
+        <li>Desplázate por el menú y busca <strong>Sitio para ordenadores</strong> o <strong>Sitio para computadoras</strong>.</li>
+        <li>Activa esa opción. Chrome actualizará esta página y VK debería cargar.</li>
+      </ol>
+      <h3>iPhone · Safari</h3>
+      <ol>
+        <li>Pulsa <strong>aA</strong> a la izquierda de la barra de direcciones.</li>
+        <li>Selecciona <strong>Sitio web en versión de escritorio</strong>.</li>
+        <li>La página se recargará y VK debería cargar.</li>
+      </ol>
+      <p class="vk-help-note">Si sigue sin cargar, desactiva la opción y prueba otra conexión, por ejemplo tus datos móviles.</p>
+    </div>
+  </dialog>
   <section class="maintenance-screen" id="maintenanceScreen" hidden aria-live="polite">
     <div class="maintenance-card">
       <div class="maintenance-brand" id="maintenanceBrand">Holi<span>Sofi</span></div>
@@ -61,6 +81,6 @@
       <p>Holisofi Live está temporalmente en mantenimiento. Intenta de nuevo más tarde.</p>
     </div>
   </section>
-  <script src="assets/app.js?v=20261110-33" defer></script>
+  <script src="assets/app.js?v=20261110-35" defer></script>
 </body>
 </html>

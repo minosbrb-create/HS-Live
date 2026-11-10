@@ -1,7 +1,9 @@
     const player = document.getElementById('player');
     const landscapeChatToggle = document.getElementById('landscapeChatToggle');
-    const landscapeChatQuery = window.matchMedia('(orientation: landscape) and (pointer: coarse) and (max-height: 700px)');
-    const portraitChatQuery = window.matchMedia('(orientation: portrait) and (pointer: coarse) and (max-width: 680px)');
+    const landscapeChatQuery = window.matchMedia('(orientation: landscape) and (pointer: coarse) and (max-height: 700px), (orientation: landscape) and (pointer: coarse) and (max-device-height: 700px)');
+    const portraitChatQuery = window.matchMedia('(orientation: portrait) and (pointer: coarse) and (max-width: 680px), (orientation: portrait) and (pointer: coarse) and (max-device-width: 680px)');
+    const smallTouchScreenQuery = window.matchMedia('(pointer: coarse) and (max-device-width: 680px)');
+    const isMobileLayout = () => window.innerWidth <= 680 || smallTouchScreenQuery.matches;
     const mobileVisualViewport = window.visualViewport;
     let mobileBaseViewportHeight = mobileVisualViewport?.height || window.innerHeight;
     function syncMobileVisualViewport() {
@@ -95,7 +97,7 @@
     let mobilePlayerMenuTimer = null;
     function scheduleMobilePlayerMenuClose() {
       window.clearTimeout(mobilePlayerMenuTimer);
-      if (playerControls.classList.contains('menu-open') && window.innerWidth <= 680) {
+      if (playerControls.classList.contains('menu-open') && isMobileLayout()) {
         mobilePlayerMenuTimer = window.setTimeout(() => setMobilePlayerMenu(false), 3_000);
       }
     }
@@ -115,6 +117,13 @@
     });
     const videoReload = document.getElementById('videoReload');
     const videoReloadLabel = videoReload.querySelector('span');
+    const vkHelpDialog = document.getElementById('vkHelpDialog');
+    const vkHelpButtons = [document.getElementById('vkHelpButton'), document.getElementById('vkHelpMobile')];
+    for (const button of vkHelpButtons) button.addEventListener('click', () => vkHelpDialog.showModal());
+    document.getElementById('vkHelpClose').addEventListener('click', () => vkHelpDialog.close());
+    vkHelpDialog.addEventListener('click', event => {
+      if (event.target === vkHelpDialog) vkHelpDialog.close();
+    });
     const theaterToggle = document.getElementById('theaterToggle');
     const theaterToggleLabel = theaterToggle.querySelector('span');
     let currentVideoPlatform = '';
@@ -158,6 +167,7 @@
       }
       if (src) videoEmbed.src = src;
       currentVideoPlatform = src && ['vk', 'youtube', 'ok'].includes(config?.videoPlatform) ? config.videoPlatform : '';
+      document.body.classList.toggle('vk-video', currentVideoPlatform === 'vk');
       videoReload.hidden = !currentVideoPlatform;
       playerControls.classList.toggle('has-ok-video', currentVideoPlatform === 'ok');
     }
@@ -176,7 +186,7 @@
       videoReloadTimer = window.setTimeout(() => {
         videoReload.disabled = false;
         videoReloadLabel.textContent = 'Recargar video';
-      }, 10_000);
+      }, 5_000);
     });
     function setTheaterMode(enabled) {
       document.body.classList.toggle('theater-mode', enabled);
@@ -261,7 +271,7 @@
     const layout = document.querySelector('.layout');
     let chatHidden = false;
     function alignChatWithPlayer() {
-      if (window.innerWidth <= 680 || chatHidden) {
+      if (isMobileLayout() || chatHidden) {
         chatColumn.style.removeProperty('height');
         chatColumn.style.removeProperty('margin-top');
         chatColumn.style.removeProperty('align-self');
@@ -280,7 +290,7 @@
       }
     }
     function renderChatVisibility() {
-      const mobile = window.innerWidth <= 680;
+      const mobile = isMobileLayout();
       layout.classList.toggle('chat-hidden', chatHidden && !mobile);
       chat.classList.toggle('collapsed', chatHidden && mobile);
       const expanded = String(!chatHidden);
