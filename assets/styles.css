@@ -46,5 +46,6 @@
     .maintenance-card{width:min(100%,520px);padding:clamp(28px,6vw,52px);border:0;border-radius:18px;background:#15151eef;box-shadow:0 18px 60px #0009;text-align:center}
     .maintenance-brand{margin-bottom:18px;font-size:34px;font-weight:850;letter-spacing:-.04em}.maintenance-brand span{color:var(--accent)}
     .maintenance-card h1{margin:0 0 10px;font-size:clamp(24px,5vw,34px)}.maintenance-card p{margin:0;color:var(--muted)}
+    .chat,.twitch-chat{border-top-left-radius:0!important;border-top-right-radius:0!important}
     body.maintenance-mode .topbar,body.maintenance-mode main{display:none}
     .maintenance-screen[hidden]{display:none}
