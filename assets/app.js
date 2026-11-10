@@ -145,7 +145,10 @@
       if (!portraitChatQuery.matches || videoReload.hidden) return;
       document.body.classList.add('portrait-reload-visible');
       window.clearTimeout(portraitReloadTimer);
-      portraitReloadTimer = window.setTimeout(() => document.body.classList.remove('portrait-reload-visible'), 5_000);
+      portraitReloadTimer = window.setTimeout(() => {
+        document.body.classList.remove('portrait-reload-visible');
+        if (document.activeElement === videoEmbed) videoEmbed.blur();
+      }, 5_000);
     }
     const vkHelpDialog = document.getElementById('vkHelpDialog');
     const vkHelpButtons = [document.getElementById('vkHelpButton'), document.getElementById('vkHelpMobile')];
@@ -155,10 +158,16 @@
       if (!portraitChatQuery.matches) return;
       document.body.classList.remove('mobile-help-hidden');
       window.clearTimeout(mobileHelpTimer);
-      mobileHelpTimer = window.setTimeout(() => document.body.classList.add('mobile-help-hidden'), 5_000);
+      mobileHelpTimer = window.setTimeout(() => {
+        document.body.classList.add('mobile-help-hidden');
+        if (document.activeElement === videoEmbed) videoEmbed.blur();
+      }, 5_000);
     }
     revealMobileHelp();
-    window.addEventListener('orientationchange', () => window.setTimeout(revealMobileHelp, 600), { passive: true });
+    window.addEventListener('orientationchange', () => window.setTimeout(() => {
+      revealMobileHelp();
+      revealPortraitReload();
+    }, 600), { passive: true });
     const vkHelpTitle = document.getElementById('vkHelpTitle');
     const vkHelpPages = [document.getElementById('vkHelpPage1'), document.getElementById('vkHelpPage2')];
     const vkHelpPageButtons = [...vkHelpDialog.querySelectorAll('[data-help-page]')];
