@@ -1,4 +1,15 @@
     const player = document.getElementById('player');
+    const landscapeChatToggle = document.getElementById('landscapeChatToggle');
+    const landscapeChatQuery = window.matchMedia('(orientation: landscape) and (pointer: coarse) and (max-height: 700px)');
+    function setLandscapeChatOpen(open) {
+      document.body.classList.toggle('landscape-chat-open', open);
+      landscapeChatToggle.setAttribute('aria-expanded', String(open));
+      landscapeChatToggle.setAttribute('aria-label', open ? 'Mostrar solo el video' : 'Mostrar chat');
+      landscapeChatToggle.querySelector('span').textContent = open ? 'Solo video' : 'Chat';
+    }
+    landscapeChatToggle.addEventListener('click', () => {
+      setLandscapeChatOpen(!document.body.classList.contains('landscape-chat-open'));
+    });
     let videoEmbed = document.querySelector('.video-embed');
     const playerControls = document.getElementById('playerControls');
     const mobilePlayerMenu = document.getElementById('mobilePlayerMenu');
@@ -191,7 +202,11 @@
       document.getElementById('desktopChatLabel').textContent = action;
       requestAnimationFrame(alignChatWithPlayer);
     }
-    window.addEventListener('resize', () => { renderChatVisibility(); alignChatWithPlayer(); });
+    window.addEventListener('resize', () => {
+      if (!landscapeChatQuery.matches) setLandscapeChatOpen(false);
+      renderChatVisibility();
+      alignChatWithPlayer();
+    });
     if ('ResizeObserver' in window) new ResizeObserver(alignChatWithPlayer).observe(player);
     requestAnimationFrame(alignChatWithPlayer);
     function toggleChat() { chatHidden = !chatHidden; renderChatVisibility(); }
