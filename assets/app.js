@@ -10,8 +10,6 @@
       if (height > mobileBaseViewportHeight) mobileBaseViewportHeight = height;
       document.documentElement.style.setProperty('--mobile-visual-height', `${Math.round(height)}px`);
       document.documentElement.style.setProperty('--mobile-visual-top', `${Math.round(top)}px`);
-      const keyboardOpen = mobileBaseViewportHeight - height > 140;
-      document.body.classList.toggle('mobile-keyboard-open', keyboardOpen);
       const chatFrame = document.getElementById('twitchChat');
       if (chatFrame) {
         chatFrame.style.removeProperty('height');
@@ -40,13 +38,14 @@
     window.addEventListener('orientationchange', () => window.setTimeout(() => {
       mobileBaseViewportHeight = mobileVisualViewport?.height || window.innerHeight;
       syncMobileVisualViewport();
+      revealLandscapeControl();
     }, 300), { passive: true });
     function setLandscapeChatOpen(open) {
       document.body.classList.toggle('landscape-chat-open', open);
       syncMobileVisualViewport();
       landscapeChatToggle.setAttribute('aria-expanded', String(open));
       landscapeChatToggle.setAttribute('aria-label', open ? 'Mostrar solo el video' : 'Mostrar chat');
-      landscapeChatToggle.querySelector('span').textContent = open ? 'Solo video' : 'Chat';
+      landscapeChatToggle.querySelector('span').textContent = open ? 'Solo video' : 'Mostrar chat';
       revealLandscapeControl();
     }
     landscapeChatToggle.addEventListener('click', async () => {
@@ -59,6 +58,8 @@
       setLandscapeChatOpen(open);
     });
     let videoEmbed = document.querySelector('.video-embed');
+    videoEmbed.addEventListener('focus', revealLandscapeControl);
+    if (landscapeChatQuery.matches) revealLandscapeControl();
     const playerControls = document.getElementById('playerControls');
     const mobilePlayerMenu = document.getElementById('mobilePlayerMenu');
     let mobilePlayerMenuTimer = null;
@@ -138,6 +139,7 @@
       okVideoReloadLabel.textContent = 'Espera...';
       const refreshedEmbed = videoEmbed.cloneNode(false);
       refreshedEmbed.src = currentSrc;
+      refreshedEmbed.addEventListener('focus', revealLandscapeControl);
       videoEmbed.replaceWith(refreshedEmbed);
       videoEmbed = refreshedEmbed;
       window.clearTimeout(okVideoReloadTimer);
