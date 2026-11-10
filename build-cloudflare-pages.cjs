@@ -10,6 +10,7 @@ const sourceFiles = [
   'assets/app.js',
   'assets/mobile-viewport.js',
   'assets/favicon.svg',
+  'assets/vk-vpn-warning-example.png',
   'assets/fondo-floral-negro.png',
   'assets/patreon-icon.png',
   'assets/twitch-glitch.svg',
