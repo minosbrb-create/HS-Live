@@ -1,6 +1,20 @@
     const player = document.getElementById('player');
     let videoEmbed = document.querySelector('.video-embed');
     const playerControls = document.getElementById('playerControls');
+    const mobilePlayerMenu = document.getElementById('mobilePlayerMenu');
+    let mobilePlayerMenuTimer = null;
+    function setMobilePlayerMenu(open) {
+      playerControls.classList.toggle('menu-open', open);
+      mobilePlayerMenu.setAttribute('aria-expanded', String(open));
+      mobilePlayerMenu.setAttribute('aria-label', open ? 'Ocultar controles del video' : 'Mostrar controles del video');
+      window.clearTimeout(mobilePlayerMenuTimer);
+      if (open && window.innerWidth <= 680) {
+        mobilePlayerMenuTimer = window.setTimeout(() => setMobilePlayerMenu(false), 5_000);
+      }
+    }
+    mobilePlayerMenu.addEventListener('click', () => {
+      setMobilePlayerMenu(!playerControls.classList.contains('menu-open'));
+    });
     const okVideoReload = document.getElementById('okVideoReload');
     const okVideoReloadLabel = okVideoReload.querySelector('span');
     const theaterToggle = document.getElementById('theaterToggle');
@@ -51,6 +65,7 @@
     }
     okVideoReload.addEventListener('click', () => {
       if (currentVideoPlatform !== 'ok' || okVideoReload.disabled || !videoEmbed.getAttribute('src')) return;
+      setMobilePlayerMenu(false);
       const currentSrc = videoEmbed.getAttribute('src');
       okVideoReload.disabled = true;
       okVideoReloadLabel.textContent = 'Espera...';
@@ -73,10 +88,13 @@
       requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
     }
     theaterToggle.addEventListener('click', () => {
+      setMobilePlayerMenu(false);
       setTheaterMode(!document.body.classList.contains('theater-mode'));
     });
     window.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && document.body.classList.contains('theater-mode')) setTheaterMode(false);
+      if (event.key !== 'Escape') return;
+      if (playerControls.classList.contains('menu-open')) setMobilePlayerMenu(false);
+      else if (document.body.classList.contains('theater-mode')) setTheaterMode(false);
     });
     async function getSiteConfig() {
       try {
