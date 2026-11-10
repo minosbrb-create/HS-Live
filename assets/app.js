@@ -86,7 +86,9 @@
     }
     landscapeChatToggle.addEventListener('click', async () => {
       const open = !document.body.classList.contains('landscape-chat-open');
-      if (open && landscapeChatQuery.matches && document.fullscreenElement !== document.documentElement) {
+      // This control is only shown in mobile landscape. Don't gate fullscreen
+      // on matchMedia here: it can lag briefly behind a device rotation.
+      if (open && document.fullscreenElement !== document.documentElement) {
         try { await document.documentElement.requestFullscreen(); } catch {}
       } else if (!open && document.fullscreenElement === document.documentElement) {
         try { await document.exitFullscreen(); } catch {}
