@@ -15,9 +15,10 @@
       document.body.classList.toggle('mobile-keyboard-open', keyboardOpen);
       const chatPanel = document.getElementById('chat');
       const chatFrame = document.getElementById('twitchChat');
-      if (keyboardOpen && chatPanel && chatFrame) {
-        const frameHeight = 720;
+      const landscapeChatOpen = landscapeChatQuery.matches && document.body.classList.contains('landscape-chat-open');
+      if ((keyboardOpen || landscapeChatOpen) && chatPanel && chatFrame) {
         const visibleHeight = chatPanel.getBoundingClientRect().height;
+        const frameHeight = Math.max(720, Math.ceil(visibleHeight) + 240);
         chatFrame.style.height = `${frameHeight}px`;
         chatFrame.style.flex = `0 0 ${frameHeight}px`;
         chatFrame.style.transform = `translateY(-${Math.max(0, frameHeight - visibleHeight)}px)`;
@@ -37,6 +38,7 @@
     }, 300), { passive: true });
     function setLandscapeChatOpen(open) {
       document.body.classList.toggle('landscape-chat-open', open);
+      syncMobileVisualViewport();
       landscapeChatToggle.setAttribute('aria-expanded', String(open));
       landscapeChatToggle.setAttribute('aria-label', open ? 'Mostrar solo el video' : 'Mostrar chat');
       landscapeChatToggle.querySelector('span').textContent = open ? 'Solo video' : 'Chat';
