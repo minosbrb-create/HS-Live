@@ -48,12 +48,12 @@
       }, 4_000);
     }
     player.addEventListener('pointerdown', revealLandscapeControl, { passive: true });
-    player.addEventListener('pointerdown', revealMobileHelp, { passive: true });
+    player.addEventListener('pointerdown', revealPortraitVideoControls, { passive: true });
     player.addEventListener('focusin', revealLandscapeControl);
     window.addEventListener('blur', () => {
       if (document.activeElement === videoEmbed) {
         revealLandscapeControl();
-        revealMobileHelp();
+        revealPortraitVideoControls();
       }
     });
     function settleMobileViewport(resetBaseline = false) {
@@ -104,7 +104,7 @@
     });
     let videoEmbed = document.querySelector('.video-embed');
     videoEmbed.addEventListener('focus', revealLandscapeControl);
-    videoEmbed.addEventListener('focus', revealMobileHelp);
+    videoEmbed.addEventListener('focus', revealPortraitVideoControls);
     if (landscapeChatQuery.matches) revealLandscapeControl();
     const playerControls = document.getElementById('playerControls');
     const playerControlActions = document.getElementById('playerControlActions');
@@ -140,34 +140,18 @@
     });
     const videoReload = document.getElementById('videoReload');
     const videoReloadLabel = videoReload.querySelector('span');
-    let portraitReloadTimer = null;
-    function revealPortraitReload() {
-      if (!portraitChatQuery.matches || videoReload.hidden) return;
-      document.body.classList.add('portrait-reload-visible');
-      window.clearTimeout(portraitReloadTimer);
-      portraitReloadTimer = window.setTimeout(() => {
-        document.body.classList.remove('portrait-reload-visible');
-        if (document.activeElement === videoEmbed) videoEmbed.blur();
-      }, 5_000);
-    }
     const vkHelpDialog = document.getElementById('vkHelpDialog');
     const vkHelpButtons = [document.getElementById('vkHelpButton'), document.getElementById('vkHelpMobile')];
-    const vkHelpMobile = document.getElementById('vkHelpMobile');
-    let mobileHelpTimer = null;
-    function revealMobileHelp() {
+    let portraitVideoControlsTimer = null;
+    function revealPortraitVideoControls() {
       if (!portraitChatQuery.matches) return;
-      document.body.classList.remove('mobile-help-hidden');
-      window.clearTimeout(mobileHelpTimer);
-      mobileHelpTimer = window.setTimeout(() => {
-        document.body.classList.add('mobile-help-hidden');
+      document.body.classList.add('portrait-video-controls-visible');
+      window.clearTimeout(portraitVideoControlsTimer);
+      portraitVideoControlsTimer = window.setTimeout(() => {
+        document.body.classList.remove('portrait-video-controls-visible');
         if (document.activeElement === videoEmbed) videoEmbed.blur();
       }, 5_000);
     }
-    revealMobileHelp();
-    window.addEventListener('orientationchange', () => window.setTimeout(() => {
-      revealMobileHelp();
-      revealPortraitReload();
-    }, 600), { passive: true });
     const vkHelpTitle = document.getElementById('vkHelpTitle');
     const vkHelpPages = [document.getElementById('vkHelpPage1'), document.getElementById('vkHelpPage2')];
     const vkHelpPageButtons = [...vkHelpDialog.querySelectorAll('[data-help-page]')];
@@ -185,7 +169,6 @@
       showVkHelpPage(1);
       vkHelpDialog.showModal();
     });
-    vkHelpDialog.addEventListener('close', revealMobileHelp);
     vkHelpPageButtons.forEach(button => button.addEventListener('click', () => showVkHelpPage(Number(button.dataset.helpPage))));
     document.getElementById('vkHelpClose').addEventListener('click', () => vkHelpDialog.close());
     vkHelpDialog.addEventListener('click', event => {
@@ -237,7 +220,6 @@
       document.body.classList.toggle('vk-video', currentVideoPlatform === 'vk');
       videoReload.hidden = !currentVideoPlatform;
       playerControls.classList.toggle('has-ok-video', currentVideoPlatform === 'ok');
-      revealPortraitReload();
     }
     videoReload.addEventListener('click', () => {
       if (!currentVideoPlatform || videoReload.disabled || !videoEmbed.getAttribute('src')) return;
@@ -260,14 +242,7 @@
         videoReloadLabel.textContent = 'Recargar video';
       }, 5_000);
     });
-    videoEmbed.addEventListener('focus', revealPortraitReload);
-    videoEmbed.addEventListener('focus', revealMobileHelp);
-    document.addEventListener('pointerdown', event => {
-      if (event.target !== videoReload) revealPortraitReload();
-    }, { passive: true, capture: true });
-    window.addEventListener('blur', () => {
-      if (document.activeElement === videoEmbed) revealPortraitReload();
-    });
+    videoEmbed.addEventListener('focus', revealPortraitVideoControls);
     function setTheaterMode(enabled) {
       document.body.classList.toggle('theater-mode', enabled);
       placePlayerControlActions();
