@@ -82,6 +82,15 @@
     videoEmbed.addEventListener('focus', revealLandscapeControl);
     if (landscapeChatQuery.matches) revealLandscapeControl();
     const playerControls = document.getElementById('playerControls');
+    const playerControlActions = document.getElementById('playerControlActions');
+    const desktopPlayerActions = document.getElementById('desktopPlayerActions');
+    function placePlayerControlActions() {
+      const inHeader = window.innerWidth > 900 && window.matchMedia('(pointer:fine)').matches && !document.body.classList.contains('theater-mode');
+      const destination = inHeader ? desktopPlayerActions : playerControls;
+      if (playerControlActions.parentElement !== destination) destination.append(playerControlActions);
+      desktopPlayerActions.setAttribute('aria-hidden', String(!inHeader));
+    }
+    placePlayerControlActions();
     const mobilePlayerMenu = document.getElementById('mobilePlayerMenu');
     let mobilePlayerMenuTimer = null;
     function scheduleMobilePlayerMenuClose() {
@@ -104,12 +113,12 @@
       if (!playerControls.contains(event.target)) setMobilePlayerMenu(false);
       else scheduleMobilePlayerMenuClose();
     });
-    const okVideoReload = document.getElementById('okVideoReload');
-    const okVideoReloadLabel = okVideoReload.querySelector('span');
+    const videoReload = document.getElementById('videoReload');
+    const videoReloadLabel = videoReload.querySelector('span');
     const theaterToggle = document.getElementById('theaterToggle');
     const theaterToggleLabel = theaterToggle.querySelector('span');
     let currentVideoPlatform = '';
-    let okVideoReloadTimer = null;
+    let videoReloadTimer = null;
     const maintenanceScreen = document.getElementById('maintenanceScreen');
     let maintenanceMode = false;
     let maintenancePoll = null;
@@ -148,29 +157,30 @@
         videoEmbed.title = 'Video de OK.ru';
       }
       if (src) videoEmbed.src = src;
-      currentVideoPlatform = src && config?.videoPlatform === 'ok' ? 'ok' : '';
-      okVideoReload.hidden = currentVideoPlatform !== 'ok';
+      currentVideoPlatform = src && ['vk', 'youtube', 'ok'].includes(config?.videoPlatform) ? config.videoPlatform : '';
+      videoReload.hidden = !currentVideoPlatform;
       playerControls.classList.toggle('has-ok-video', currentVideoPlatform === 'ok');
     }
-    okVideoReload.addEventListener('click', () => {
-      if (currentVideoPlatform !== 'ok' || okVideoReload.disabled || !videoEmbed.getAttribute('src')) return;
+    videoReload.addEventListener('click', () => {
+      if (!currentVideoPlatform || videoReload.disabled || !videoEmbed.getAttribute('src')) return;
       setMobilePlayerMenu(false);
       const currentSrc = videoEmbed.getAttribute('src');
-      okVideoReload.disabled = true;
-      okVideoReloadLabel.textContent = 'Espera...';
+      videoReload.disabled = true;
+      videoReloadLabel.textContent = 'Espera...';
       const refreshedEmbed = videoEmbed.cloneNode(false);
       refreshedEmbed.src = currentSrc;
       refreshedEmbed.addEventListener('focus', revealLandscapeControl);
       videoEmbed.replaceWith(refreshedEmbed);
       videoEmbed = refreshedEmbed;
-      window.clearTimeout(okVideoReloadTimer);
-      okVideoReloadTimer = window.setTimeout(() => {
-        okVideoReload.disabled = false;
-        okVideoReloadLabel.textContent = 'Recargar video';
+      window.clearTimeout(videoReloadTimer);
+      videoReloadTimer = window.setTimeout(() => {
+        videoReload.disabled = false;
+        videoReloadLabel.textContent = 'Recargar video';
       }, 10_000);
     });
     function setTheaterMode(enabled) {
       document.body.classList.toggle('theater-mode', enabled);
+      placePlayerControlActions();
       theaterToggle.setAttribute('aria-pressed', String(enabled));
       theaterToggle.setAttribute('aria-label', enabled ? 'Salir del modo teatro' : 'Activar modo teatro');
       theaterToggle.title = enabled ? 'Salir del modo teatro (Esc)' : 'Activar modo teatro';
@@ -286,6 +296,7 @@
       requestAnimationFrame(alignChatWithPlayer);
     }
     window.addEventListener('resize', () => {
+      placePlayerControlActions();
       if (!landscapeChatQuery.matches) {
         setLandscapeChatOpen(false);
         document.body.classList.remove('landscape-controls-visible');
