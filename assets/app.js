@@ -6,7 +6,7 @@
     function scheduleMobilePlayerMenuClose() {
       window.clearTimeout(mobilePlayerMenuTimer);
       if (playerControls.classList.contains('menu-open') && window.innerWidth <= 680) {
-        mobilePlayerMenuTimer = window.setTimeout(() => setMobilePlayerMenu(false), 12_000);
+        mobilePlayerMenuTimer = window.setTimeout(() => setMobilePlayerMenu(false), 3_000);
       }
     }
     function setMobilePlayerMenu(open) {
