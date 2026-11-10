@@ -146,6 +146,8 @@
     function revealPortraitVideoControls() {
       if (!portraitChatQuery.matches) return;
       if (videoEmbed.getAttribute('src')) videoReload.hidden = false;
+      window.clearTimeout(controlsIdleTimer);
+      player.classList.remove('controls-idle');
       document.body.classList.add('portrait-video-controls-visible');
       window.clearTimeout(portraitVideoControlsTimer);
       portraitVideoControlsTimer = window.setTimeout(() => {
@@ -327,6 +329,7 @@
     function resetPlayerControlsTimer() {
       player.classList.remove('controls-idle');
       window.clearTimeout(controlsIdleTimer);
+      if (portraitChatQuery.matches) return;
       if (document.fullscreenElement === player || player.matches(':hover') || player.contains(document.activeElement)) {
         controlsIdleTimer = window.setTimeout(() => player.classList.add('controls-idle'), 1800);
       }
