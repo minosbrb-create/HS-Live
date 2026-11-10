@@ -48,9 +48,13 @@
       }, 4_000);
     }
     player.addEventListener('pointerdown', revealLandscapeControl, { passive: true });
+    player.addEventListener('pointerdown', revealMobileHelp, { passive: true });
     player.addEventListener('focusin', revealLandscapeControl);
     window.addEventListener('blur', () => {
-      if (document.activeElement === videoEmbed) revealLandscapeControl();
+      if (document.activeElement === videoEmbed) {
+        revealLandscapeControl();
+        revealMobileHelp();
+      }
     });
     function settleMobileViewport(resetBaseline = false) {
       window.setTimeout(() => {
@@ -100,6 +104,7 @@
     });
     let videoEmbed = document.querySelector('.video-embed');
     videoEmbed.addEventListener('focus', revealLandscapeControl);
+    videoEmbed.addEventListener('focus', revealMobileHelp);
     if (landscapeChatQuery.matches) revealLandscapeControl();
     const playerControls = document.getElementById('playerControls');
     const playerControlActions = document.getElementById('playerControlActions');
@@ -140,10 +145,20 @@
       if (!portraitChatQuery.matches || videoReload.hidden) return;
       document.body.classList.add('portrait-reload-visible');
       window.clearTimeout(portraitReloadTimer);
-      portraitReloadTimer = window.setTimeout(() => document.body.classList.remove('portrait-reload-visible'), 4_000);
+      portraitReloadTimer = window.setTimeout(() => document.body.classList.remove('portrait-reload-visible'), 5_000);
     }
     const vkHelpDialog = document.getElementById('vkHelpDialog');
     const vkHelpButtons = [document.getElementById('vkHelpButton'), document.getElementById('vkHelpMobile')];
+    const vkHelpMobile = document.getElementById('vkHelpMobile');
+    let mobileHelpTimer = null;
+    function revealMobileHelp() {
+      if (!portraitChatQuery.matches) return;
+      document.body.classList.remove('mobile-help-hidden');
+      window.clearTimeout(mobileHelpTimer);
+      mobileHelpTimer = window.setTimeout(() => document.body.classList.add('mobile-help-hidden'), 5_000);
+    }
+    revealMobileHelp();
+    window.addEventListener('orientationchange', () => window.setTimeout(revealMobileHelp, 600), { passive: true });
     const vkHelpTitle = document.getElementById('vkHelpTitle');
     const vkHelpPages = [document.getElementById('vkHelpPage1'), document.getElementById('vkHelpPage2')];
     const vkHelpPageButtons = [...vkHelpDialog.querySelectorAll('[data-help-page]')];
@@ -161,6 +176,7 @@
       showVkHelpPage(1);
       vkHelpDialog.showModal();
     });
+    vkHelpDialog.addEventListener('close', revealMobileHelp);
     vkHelpPageButtons.forEach(button => button.addEventListener('click', () => showVkHelpPage(Number(button.dataset.helpPage))));
     document.getElementById('vkHelpClose').addEventListener('click', () => vkHelpDialog.close());
     vkHelpDialog.addEventListener('click', event => {
@@ -212,6 +228,7 @@
       document.body.classList.toggle('vk-video', currentVideoPlatform === 'vk');
       videoReload.hidden = !currentVideoPlatform;
       playerControls.classList.toggle('has-ok-video', currentVideoPlatform === 'ok');
+      revealPortraitReload();
     }
     videoReload.addEventListener('click', () => {
       if (!currentVideoPlatform || videoReload.disabled || !videoEmbed.getAttribute('src')) return;
@@ -235,6 +252,10 @@
       }, 5_000);
     });
     videoEmbed.addEventListener('focus', revealPortraitReload);
+    videoEmbed.addEventListener('focus', revealMobileHelp);
+    document.addEventListener('pointerdown', event => {
+      if (event.target !== videoReload) revealPortraitReload();
+    }, { passive: true, capture: true });
     window.addEventListener('blur', () => {
       if (document.activeElement === videoEmbed) revealPortraitReload();
     });
