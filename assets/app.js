@@ -3,17 +3,25 @@
     const playerControls = document.getElementById('playerControls');
     const mobilePlayerMenu = document.getElementById('mobilePlayerMenu');
     let mobilePlayerMenuTimer = null;
+    function scheduleMobilePlayerMenuClose() {
+      window.clearTimeout(mobilePlayerMenuTimer);
+      if (playerControls.classList.contains('menu-open') && window.innerWidth <= 680) {
+        mobilePlayerMenuTimer = window.setTimeout(() => setMobilePlayerMenu(false), 12_000);
+      }
+    }
     function setMobilePlayerMenu(open) {
       playerControls.classList.toggle('menu-open', open);
       mobilePlayerMenu.setAttribute('aria-expanded', String(open));
       mobilePlayerMenu.setAttribute('aria-label', open ? 'Ocultar controles del video' : 'Mostrar controles del video');
-      window.clearTimeout(mobilePlayerMenuTimer);
-      if (open && window.innerWidth <= 680) {
-        mobilePlayerMenuTimer = window.setTimeout(() => setMobilePlayerMenu(false), 5_000);
-      }
+      scheduleMobilePlayerMenuClose();
     }
     mobilePlayerMenu.addEventListener('click', () => {
       setMobilePlayerMenu(!playerControls.classList.contains('menu-open'));
+    });
+    document.addEventListener('pointerdown', event => {
+      if (!playerControls.classList.contains('menu-open')) return;
+      if (!playerControls.contains(event.target)) setMobilePlayerMenu(false);
+      else scheduleMobilePlayerMenuClose();
     });
     const okVideoReload = document.getElementById('okVideoReload');
     const okVideoReloadLabel = okVideoReload.querySelector('span');
