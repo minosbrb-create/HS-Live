@@ -10,9 +10,14 @@
       if (height > mobileBaseViewportHeight) mobileBaseViewportHeight = height;
       document.documentElement.style.setProperty('--mobile-visual-height', `${Math.round(height)}px`);
       document.documentElement.style.setProperty('--mobile-visual-top', `${Math.round(top)}px`);
-      const keyboardOpen = mobileBaseViewportHeight - height > 140;
-      document.body.classList.toggle('mobile-keyboard-open', keyboardOpen);
       const chatFrame = document.getElementById('twitchChat');
+      const chatHasFocus = document.activeElement === chatFrame;
+      const keyboardDelta = mobileBaseViewportHeight - height;
+      const landscapeChatActive = landscapeChatQuery.matches && document.body.classList.contains('landscape-chat-open');
+      const wasKeyboardOpen = document.body.classList.contains('mobile-keyboard-open');
+      const keyboardThreshold = landscapeChatActive ? (wasKeyboardOpen ? 45 : (chatHasFocus ? 75 : 140)) : 140;
+      const keyboardOpen = keyboardDelta > keyboardThreshold;
+      document.body.classList.toggle('mobile-keyboard-open', keyboardOpen);
       if (chatFrame) {
         const chatPanel = document.getElementById('chat');
         const landscapeKeyboard = landscapeChatQuery.matches && document.body.classList.contains('landscape-chat-open');
