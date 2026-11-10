@@ -236,7 +236,7 @@
       twitchSubscribeLink.href = `https://www.twitch.tv/subs/${normalizedLogin}`;
       twitchSubscribeLink.setAttribute('aria-label', `Suscribirse o regalar una suscripción al canal ${normalizedLogin} en Twitch`);
       if (location.protocol !== 'file:') {
-        twitchChat.src = `https://www.twitch.tv/embed/${normalizedLogin}/chat?parent=${encodeURIComponent(location.hostname)}`;
+        twitchChat.src = `https://www.twitch.tv/embed/${normalizedLogin}/chat?parent=${encodeURIComponent(location.hostname)}&darkpopout`;
       }
     }
     if (location.protocol === 'file:') {
