@@ -20,10 +20,11 @@ function parseVideoSource(value) {
   const okUrlMatch = /^(?:ok:)?https?:\/\/(?:www\.|m\.)?ok\.ru\/(?:video|videoembed|live)\/(\d+)(?:[/?#].*)?$/i.exec(trimmedValue);
   if (okUrlMatch) return { platform: 'ok', channel: okUrlMatch[1] };
 
-  const match = /^(vk|twitch|youtube|drive|ok):([a-z0-9_-]{1,200})$/i.exec(trimmedValue);
+  const match = /^(vk|twitch|youtube|yt|drive|ok):([a-z0-9_-]{1,200})$/i.exec(trimmedValue);
   if (!match) return DEFAULT_VIDEO;
 
-  const platform = match[1].toLowerCase();
+  const requestedPlatform = match[1].toLowerCase();
+  const platform = requestedPlatform === 'yt' ? 'youtube' : requestedPlatform;
   const identifier = match[2];
   if (platform === 'vk' && !/^[a-z0-9_-]{1,64}$/i.test(identifier)) return DEFAULT_VIDEO;
   if (platform === 'twitch' && !/^[a-z0-9_]{1,25}$/i.test(identifier)) return DEFAULT_VIDEO;
