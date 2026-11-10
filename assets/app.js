@@ -145,6 +145,7 @@
     let portraitVideoControlsTimer = null;
     function revealPortraitVideoControls() {
       if (!portraitChatQuery.matches) return;
+      if (videoEmbed.getAttribute('src')) videoReload.hidden = false;
       document.body.classList.add('portrait-video-controls-visible');
       window.clearTimeout(portraitVideoControlsTimer);
       portraitVideoControlsTimer = window.setTimeout(() => {
@@ -220,13 +221,13 @@
         videoEmbed.title = 'Video de OK.ru';
       }
       if (src) videoEmbed.src = src;
-      currentVideoPlatform = src && ['vk', 'youtube', 'ok'].includes(config?.videoPlatform) ? config.videoPlatform : '';
+      currentVideoPlatform = src ? config.videoPlatform : '';
       document.body.classList.toggle('vk-video', currentVideoPlatform === 'vk');
-      videoReload.hidden = !currentVideoPlatform;
+      videoReload.hidden = !src;
       playerControls.classList.toggle('has-ok-video', currentVideoPlatform === 'ok');
     }
     videoReload.addEventListener('click', () => {
-      if (!currentVideoPlatform || videoReload.disabled || !videoEmbed.getAttribute('src')) return;
+      if (!videoEmbed.getAttribute('src') || videoReload.disabled) return;
       setMobilePlayerMenu(false);
       if (isMobileLayout()) {
         location.reload();
