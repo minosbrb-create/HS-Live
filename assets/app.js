@@ -62,6 +62,19 @@
       }, 500);
     }
     window.addEventListener('orientationchange', () => settleMobileViewport(true), { passive: true });
+    // Mobile browsers settle their visible viewport in stages after rotation.
+    // Keep the player fitted without changing chat state/layout.
+    function syncRotatedMobileViewportFrame() {
+      if (!window.matchMedia('(pointer: coarse)').matches) return;
+      const height = mobileVisualViewport?.height || window.innerHeight;
+      const top = mobileVisualViewport?.offsetTop || 0;
+      document.documentElement.style.setProperty('--mobile-visual-height', `${Math.round(height)}px`);
+      document.documentElement.style.setProperty('--mobile-visual-top', `${Math.round(top)}px`);
+    }
+    window.addEventListener('orientationchange', () => {
+      [100, 300, 700, 1100].forEach((delay) => window.setTimeout(syncRotatedMobileViewportFrame, delay));
+    }, { passive: true });
+    mobileVisualViewport?.addEventListener('resize', syncRotatedMobileViewportFrame, { passive: true });
     document.addEventListener('fullscreenchange', () => settleMobileViewport(false), { passive: true });
     function setLandscapeChatOpen(open) {
       document.body.classList.toggle('landscape-chat-open', open);
