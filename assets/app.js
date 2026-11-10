@@ -3,6 +3,8 @@
     const playerControls = document.getElementById('playerControls');
     const okVideoReload = document.getElementById('okVideoReload');
     const okVideoReloadLabel = okVideoReload.querySelector('span');
+    const theaterToggle = document.getElementById('theaterToggle');
+    const theaterToggleLabel = theaterToggle.querySelector('span');
     let currentVideoPlatform = '';
     let okVideoReloadTimer = null;
     const maintenanceScreen = document.getElementById('maintenanceScreen');
@@ -61,6 +63,20 @@
         okVideoReload.disabled = false;
         okVideoReloadLabel.textContent = 'Recargar video';
       }, 10_000);
+    });
+    function setTheaterMode(enabled) {
+      document.body.classList.toggle('theater-mode', enabled);
+      theaterToggle.setAttribute('aria-pressed', String(enabled));
+      theaterToggle.setAttribute('aria-label', enabled ? 'Salir del modo teatro' : 'Activar modo teatro');
+      theaterToggle.title = enabled ? 'Salir del modo teatro (Esc)' : 'Activar modo teatro';
+      theaterToggleLabel.textContent = enabled ? 'Salir del teatro' : 'Modo teatro';
+      requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+    }
+    theaterToggle.addEventListener('click', () => {
+      setTheaterMode(!document.body.classList.contains('theater-mode'));
+    });
+    window.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && document.body.classList.contains('theater-mode')) setTheaterMode(false);
     });
     async function getSiteConfig() {
       try {
