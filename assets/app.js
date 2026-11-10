@@ -272,9 +272,20 @@
     function alignChatWithPlayer() {
       if (window.innerWidth <= 680 || chatHidden) {
         chatColumn.style.removeProperty('height');
+        chatColumn.style.removeProperty('margin-top');
+        chatColumn.style.removeProperty('align-self');
         return;
       }
-      chatColumn.style.height = `${Math.round(player.getBoundingClientRect().height)}px`;
+      const playerRect = player.getBoundingClientRect();
+      chatColumn.style.height = `${Math.round(playerRect.height)}px`;
+      if (document.body.classList.contains('theater-mode')) {
+        const layoutTop = layout.getBoundingClientRect().top;
+        chatColumn.style.alignSelf = 'start';
+        chatColumn.style.marginTop = `${Math.round(playerRect.top - layoutTop)}px`;
+      } else {
+        chatColumn.style.removeProperty('margin-top');
+        chatColumn.style.removeProperty('align-self');
+      }
     }
     function renderChatVisibility() {
       const mobile = window.innerWidth <= 680;
