@@ -1,6 +1,18 @@
     const player = document.getElementById('player');
     const landscapeChatToggle = document.getElementById('landscapeChatToggle');
     const landscapeChatQuery = window.matchMedia('(orientation: landscape) and (pointer: coarse) and (max-height: 700px)');
+    const mobileVisualViewport = window.visualViewport;
+    function syncMobileVisualViewport() {
+      if (!window.matchMedia('(pointer: coarse)').matches) return;
+      const height = mobileVisualViewport?.height || window.innerHeight;
+      const top = mobileVisualViewport?.offsetTop || 0;
+      document.documentElement.style.setProperty('--mobile-visual-height', `${Math.round(height)}px`);
+      document.documentElement.style.setProperty('--mobile-visual-top', `${Math.round(top)}px`);
+    }
+    syncMobileVisualViewport();
+    window.addEventListener('resize', syncMobileVisualViewport, { passive: true });
+    mobileVisualViewport?.addEventListener('resize', syncMobileVisualViewport, { passive: true });
+    mobileVisualViewport?.addEventListener('scroll', syncMobileVisualViewport, { passive: true });
     function setLandscapeChatOpen(open) {
       document.body.classList.toggle('landscape-chat-open', open);
       landscapeChatToggle.setAttribute('aria-expanded', String(open));
