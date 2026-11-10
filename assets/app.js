@@ -15,10 +15,12 @@
       const chatFrame = document.getElementById('twitchChat');
       if (chatFrame) {
         const chatPanel = document.getElementById('chat');
-        if (keyboardOpen && chatPanel && !landscapeChatQuery.matches) {
+        const landscapeKeyboard = landscapeChatQuery.matches && document.body.classList.contains('landscape-chat-open');
+        if (keyboardOpen && chatPanel && (landscapeKeyboard || !landscapeChatQuery.matches)) {
           const visibleHeight = chatPanel.getBoundingClientRect().height;
-          const landscapeKeyboard = landscapeChatQuery.matches && document.body.classList.contains('landscape-chat-open');
-          const extraHeight = Math.min(landscapeKeyboard ? 320 : 180, Math.max(0, Math.round(visibleHeight * (landscapeKeyboard ? 0.85 : 0.4))));
+          const extraHeight = landscapeKeyboard
+            ? Math.min(160, Math.max(0, Math.round(visibleHeight * 0.5)))
+            : Math.min(180, Math.max(0, Math.round(visibleHeight * 0.4)));
           const frameHeight = Math.ceil(visibleHeight) + extraHeight;
           chatFrame.style.height = `${frameHeight}px`;
           chatFrame.style.flex = `0 0 ${frameHeight}px`;
@@ -48,11 +50,17 @@
     window.addEventListener('blur', () => {
       if (document.activeElement === videoEmbed) revealLandscapeControl();
     });
-    window.addEventListener('orientationchange', () => window.setTimeout(() => {
-      mobileBaseViewportHeight = mobileVisualViewport?.height || window.innerHeight;
-      syncMobileVisualViewport();
-      revealLandscapeControl();
-    }, 300), { passive: true });
+    function settleMobileViewport(resetBaseline = false) {
+      window.setTimeout(() => {
+        const height = mobileVisualViewport?.height || window.innerHeight;
+        const chatHasFocus = document.activeElement === document.getElementById('twitchChat');
+        if (resetBaseline || !chatHasFocus) mobileBaseViewportHeight = height;
+        syncMobileVisualViewport();
+        revealLandscapeControl();
+      }, 500);
+    }
+    window.addEventListener('orientationchange', () => settleMobileViewport(true), { passive: true });
+    document.addEventListener('fullscreenchange', () => settleMobileViewport(false), { passive: true });
     function setLandscapeChatOpen(open) {
       document.body.classList.toggle('landscape-chat-open', open);
       syncMobileVisualViewport();
