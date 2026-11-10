@@ -33,7 +33,8 @@
           const frameHeight = Math.ceil(visibleHeight) + extraHeight;
           chatFrame.style.height = `${frameHeight}px`;
           chatFrame.style.flex = `0 0 ${frameHeight}px`;
-          chatFrame.style.transform = `translateY(-${extraHeight}px)`;
+          if (landscapeKeyboard) chatFrame.style.removeProperty('transform');
+          else chatFrame.style.transform = `translateY(-${extraHeight}px)`;
         } else {
           chatFrame.style.removeProperty('height');
           chatFrame.style.removeProperty('flex');
