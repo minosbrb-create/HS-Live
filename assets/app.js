@@ -17,7 +17,8 @@
         const chatPanel = document.getElementById('chat');
         if (keyboardOpen && chatPanel) {
           const visibleHeight = chatPanel.getBoundingClientRect().height;
-          const extraHeight = Math.min(180, Math.max(0, Math.round(visibleHeight * 0.4)));
+          const landscapeKeyboard = landscapeChatQuery.matches && document.body.classList.contains('landscape-chat-open');
+          const extraHeight = Math.min(landscapeKeyboard ? 320 : 180, Math.max(0, Math.round(visibleHeight * (landscapeKeyboard ? 0.85 : 0.4))));
           const frameHeight = Math.ceil(visibleHeight) + extraHeight;
           chatFrame.style.height = `${frameHeight}px`;
           chatFrame.style.flex = `0 0 ${frameHeight}px`;
